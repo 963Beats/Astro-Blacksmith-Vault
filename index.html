@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Astro Blacksmith Beats</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a0a12;
+      --bg-secondary: #12121f;
+      --card: #1a1a2e;
+      --border: #2a2a3e;
+      --text: #e8e8f0;
+      --text-muted: #a0a0b0;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --success: #10b981;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, var(--bg-secondary) 100%);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 10, 18, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .header-text h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-text p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    .beats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .beat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .beat-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .beat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .beat-title {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .beat-title h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      word-break: break-word;
+    }
+
+    .beat-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .beat-icon {
+      width: 24px;
+      height: 24px;
+      color: rgba(99, 102, 241, 0.6);
+      flex-shrink: 0;
+    }
+
+    .beat-description {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .player-section {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .player-controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .play-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+    }
+
+    .play-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(1.05);
+    }
+
+    .play-btn:active {
+      transform: scale(0.95);
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar input[type="range"] {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      appearance: none;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .progress-bar input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .progress-bar input[type="range"]::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .time-display {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.25rem;
+    }
+
+    .license-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn {
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .beat-footer {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state p {
+      color: var(--text-muted);
+      font-size: 1.125rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-header p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      background: rgba(18, 18, 31, 0.5);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.75rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      z-index: 200;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--success);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+
+      main {
+        padding: 1.5rem 1rem;
+      }
+
+      .beats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .license-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="header-icon">🎵</div>
+    <div class="header-text">
+      <h1>Astro Blacksmith</h1>
+      <p>Premium Beats for Your Next Project</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="section-header">
+    <h2>Browse Our Collection</h2>
+    <p>Discover high-quality beats available for lease or exclusive purchase. Preview each beat for 30 seconds before deciding.</p>
+  </div>
+
+  <div id="beats-container" class="beats-grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      Loading beats...
+    </div>
+  </div>
+</main>
+
+<div id="exclusive-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Exclusive License Inquiry</h2>
+      <p id="modal-beat-title">For: <strong>Beat Title</strong></p>
+    </div>
+
+    <form id="inquiry-form">
+      <div class="form-group">
+        <label for="inquiry-name">Your Name</label>
+        <input type="text" id="inquiry-name" placeholder="Enter your name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inquiry-email">Email Address</label>
+        <input type="email" id="inquiry-email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="inquiry-offer">Your Offer / Message</label>
+        <textarea id="inquiry-offer" placeholder="Tell us about your project and your offer for exclusive rights..." rows="4" required></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeExclusiveModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Send Inquiry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Astro Blacksmith Beats. All rights reserved.</p>
+  <p style="margin-top: 0.5rem; font-size: 0.75rem;">Lease beats for non-exclusive use. Exclusive licenses available upon request.</p>
+</footer>
+
+<audio id="audio-player" crossorigin="anonymous"></audio>
+
+<script>
+  let beats = [];
+  let currentBeatIndex = -1;
+  let currentButton = null;
+  let selectedBeatForInquiry = null;
+
+  const audioPlayer = document.getElementById('audio-player');
+  const beatsContainer = document.getElementById('beats-container');
+  const exclusiveModal = document.getElementById('exclusive-modal');
+  const inquiryForm = document.getElementById('inquiry-form');
+
+  // Fetch beats from server
+  async function loadBeats() {
+    try {
+      const response = await fetch('/api/beats');
+      if (!response.ok) throw new Error('Failed to load beats');
+      beats = await response.json();
+      renderBeats();
+    } catch (error) {
+      console.error('Error loading beats:', error);
+      beatsContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <p>Failed to load beats. Please check the server connection.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Render beat cards
+  function renderBeats() {
+    if (beats.length === 0) {
+      beatsContainer.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🎵</div>
+          <p>No beats available yet. Check back soon!</p>
+        </div>
+      `;
+      return;
+    }
+
+    beatsContainer.innerHTML = beats.map((beat, idx) => `
+      <div class="beat-card">
+        <div class="beat-header">
+          <div class="beat-title">
+            <h3>${escapeHtml(beat.title)}</h3>
+            <div class="beat-meta">
+              ${beat.genre ? `<span>${escapeHtml(beat.genre)}</span>` : ''}
+              ${beat.genre && beat.bpm ? '<span> • </span>' : ''}
+              ${beat.bpm ? `<span>${beat.bpm} BPM</span>` : ''}
+            </div>
+          </div>
+          <div class="beat-icon">🎧</div>
+        </div>
+
+        ${beat.description ? `<div class="beat-description">${escapeHtml(beat.description)}</div>` : ''}
+
+        <div class="player-section">
+          <div class="player-controls">
+            <button class="play-btn" onclick="togglePlay(${idx})">▶ PLAY</button>
+            <div class="progress-bar">
+              <input type="range" min="0" max="30" value="0" step="0.1" onchange="seekAudio(${idx}, this.value)" ontouchstart="seekAudio(${idx}, this.value)">
+            </div>
+          </div>
+          <div class="time-display">
+            <span id="time-current-${idx}">0:00</span>
+            <span>0:30</span>
+          </div>
+        </div>
+
+        <div class="license-actions">
+          <button class="btn btn-primary" onclick="leaseBeat(${idx})">💰 Lease $5</button>
+          <button class="btn btn-secondary" onclick="openExclusiveModal(${idx})">Exclusive</button>
+        </div>
+
+        <div class="beat-footer">
+          <span>${beat.fileType.toUpperCase()}</span>
+          ${beat.duration ? `<span>${formatDuration(beat.duration)}</span>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Play/pause beat
+  function togglePlay(idx) {
+    const button = event.target.closest('.play-btn');
+    
+    if (currentBeatIndex === idx) {
+      if (audioPlayer.paused) {
+        audioPlayer.play();
+        button.textContent = '⏸ PAUSE';
+      } else {
+        audioPlayer.pause();
+        button.textContent = '▶ PLAY';
+      }
+      return;
+    }
+
+    if (currentButton) {
+      currentButton.textContent = '▶ PLAY';
+    }
+
+    currentBeatIndex = idx;
+    currentButton = button;
+    audioPlayer.src = beats[idx].fileUrl;
+    audioPlayer.currentTime = 0;
+    audioPlayer.play();
+    button.textContent = '⏸ PAUSE';
+  }
+
+  // Seek audio
+  function seekAudio(idx, value) {
+    if (currentBeatIndex === idx) {
+      audioPlayer.currentTime = parseFloat(value);
+    }
+  }
+
+  // Update progress bar and time
+  audioPlayer.addEventListener('timeupdate', () => {
+    if (currentBeatIndex >= 0) {
+      const progressBar = document.querySelector(`.beat-card:nth-child(${currentBeatIndex + 1}) .progress-bar input`);
+      const timeDisplay = document.getElementById(`time-current-${currentBeatIndex}`);
+      
+      if (progressBar) progressBar.value = Math.min(audioPlayer.currentTime, 30);
+      if (timeDisplay) timeDisplay.textContent = formatTime(audioPlayer.currentTime);
+
+      // Stop at 30 seconds
+      if (audioPlayer.currentTime >= 30) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        if (currentButton) currentButton.textContent = '▶ PLAY';
+      }
+    }
+  });
+
+  // Lease beat
+  function leaseBeat(idx) {
+    const beat = beats[idx];
+    const paypalUrl = `https://paypal.me/catsmoke/5?note=${encodeURIComponent(beat.title)}`;
+    window.open(paypalUrl, '_blank');
+  }
+
+  // Open exclusive inquiry modal
+  function openExclusiveModal(idx) {
+    selectedBeatForInquiry = beats[idx];
+    document.getElementById('modal-beat-title').innerHTML = `For: <strong>${escapeHtml(beats[idx].title)}</strong>`;
+    exclusiveModal.classList.add('active');
+  }
+
+  // Close exclusive inquiry modal
+  function closeExclusiveModal() {
+    exclusiveModal.classList.remove('active');
+    inquiryForm.reset();
+  }
+
+  // Submit inquiry form
+  inquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('inquiry-name').value.trim();
+    const email = document.getElementById('inquiry-email').value.trim();
+    const offer = document.getElementById('inquiry-offer').value.trim();
+
+    if (!name || !email || !offer) {
+      showToast('Please fill in all fields', false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          beatId: selectedBeatForInquiry.id,
+          name,
+          email,
+          offer
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to submit inquiry');
+
+      showToast('Inquiry sent! We\'ll be in touch soon.', true);
+      closeExclusiveModal();
+    } catch (error) {
+      console.error('Error submitting inquiry:', error);
+      showToast('Failed to send inquiry. Please try again.', false);
+    }
+  });
+
+  // Close modal on background click
+  exclusiveModal.addEventListener('click', (e) => {
+    if (e.target === exclusiveModal) {
+      closeExclusiveModal();
+    }
+  });
+
+  // Show toast notification
+  function showToast(message, isSuccess = true) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${isSuccess ? 'success' : ''}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+
+  // Utility functions
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function formatDuration(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Load beats on page load
+  loadBeats();
+</script>
+
+</body>
+</html>
